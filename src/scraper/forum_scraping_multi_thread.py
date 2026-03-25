@@ -5,6 +5,13 @@ import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 
+from config.config import (
+    BASE_FORUM_URL,
+    DEFAULT_MAX_PAGES,
+    PAGE_FETCH_WORKERS,
+    THREAD_FETCH_WORKERS,
+)
+
 
 class ForumScrapper:
     def __init__(self, base_url: str):
@@ -48,7 +55,7 @@ class ForumScrapper:
                 - "username": The username of the thread author.
         """
         soup = self._get_soup(page_url)
-        base_forum_url = "https://royals.ms/forum/"
+        base_forum_url = BASE_FORUM_URL
         threads = []
 
         for li in soup.select("li.discussionListItem"):
@@ -68,7 +75,9 @@ class ForumScrapper:
             )
         return threads
 
-    def get_all_threads(self, max_pages: int = 2) -> List[Dict[str, str]]:
+    def get_all_threads(
+        self, max_pages: int = DEFAULT_MAX_PAGES
+    ) -> List[Dict[str, str]]:
         """
         Scrape all threads across paginated pages concurrently.
 
@@ -88,7 +97,9 @@ class ForumScrapper:
             return self.get_thread_metadata(url)
 
         all_threads = []
-        with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+        with concurrent.futures.ThreadPoolExecutor(
+            max_workers=PAGE_FETCH_WORKERS
+        ) as executor:
             page_results = executor.map(fetch_page_threads, page_urls)
             for threads_on_page in page_results:
                 all_threads.extend(threads_on_page)
@@ -115,7 +126,9 @@ class ForumScrapper:
             thread["description"] = self._get_first_post(thread["preview_url"])
             return thread
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+        with concurrent.futures.ThreadPoolExecutor(
+            max_workers=THREAD_FETCH_WORKERS
+        ) as executor:
             return list(executor.map(fetch_thread_post, threads_to_fetch))
 
     def _get_first_post(self, preview_url: str) -> str:
