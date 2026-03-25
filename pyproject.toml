@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "royals-market-query"
 version = "0.1.0"
-description = "Scraper for the Royals MS forum marketplace"
+description = "AI query for the Royals MS forum marketplace"
 requires-python = ">=3.10"
 dependencies = [
     "beautifulsoup4>=4.12",
