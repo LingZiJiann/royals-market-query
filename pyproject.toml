@@ -1,0 +1,21 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "royals-market-query"
+version = "0.1.0"
+description = "Scraper for the Royals MS forum marketplace"
+requires-python = ">=3.10"
+dependencies = [
+    "beautifulsoup4>=4.12",
+    "pandas>=2.0",
+    "requests>=2.31",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
