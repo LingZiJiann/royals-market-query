@@ -27,7 +27,7 @@ The scraper is fully functional:
 - Returns a pandas DataFrame with columns: `title`, `username`, `preview_url`, `description`
 - Configurable via `config/config.py`
 
-The query pipeline (Phase 2) is not yet built.
+The query pipeline (Phases 2 and 3) is not yet built.
 
 ## Tech Stack
 
@@ -44,10 +44,14 @@ The query pipeline (Phase 2) is not yet built.
 ### Phase 1 — Forum Scraper (Done)
 Paginated, multithreaded scraper that collects marketplace listings into a DataFrame.
 
-### Phase 2 — Price Query Pipeline (Planned)
+### Phase 2 — Filtered Listings Query (Planned)
 - Accept an item name as input
 - Scrape or load cached listings
 - Keyword-filter listings relevant to the query
+- Return the matching listings
+
+### Phase 3 — Ollama Price Summary (Planned)
+- Take filtered listings from Phase 2 as input
 - Pass matching listings as context to a local Ollama LLM
 - Return a price summary answer
 
