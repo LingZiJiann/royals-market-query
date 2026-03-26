@@ -14,5 +14,5 @@ CACHE_FILE_PATH = "cache/listings.csv"
 CACHE_TTL_MINUTES = 30
 
 # Ollama LLM settings
-OLLAMA_MODEL = "gpt-oss:20b"
+OLLAMA_MODEL = "deepseek-r1:14b"
 OLLAMA_TIMEOUT = 60  # seconds
