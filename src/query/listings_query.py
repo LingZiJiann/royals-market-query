@@ -74,22 +74,20 @@ class ListingsQuery:
         return df
 
     def filter_by_item(self, df: pd.DataFrame, item_name: str) -> pd.DataFrame:
-        """Filters listings whose title or description contains the item name.
+        """Filters listings whose title contains the item name.
 
-        The search is case-insensitive. Rows where both ``title`` and
-        ``description`` are NaN are excluded. If ``item_name`` matches a key
+        The search is case-insensitive. If ``item_name`` matches a key
         in ``ITEM_ALIASES``, the alias expansion terms are also searched so
         that acronyms like ``"gfa"`` match listings that say "gloves for attack".
 
         Args:
-            df: DataFrame of listings, expected to have ``title`` and
-                ``description`` string columns.
-            item_name: The search term to match against listing text. May be
+            df: DataFrame of listings, expected to have a ``title`` string column.
+            item_name: The search term to match against the listing title. May be
                 an acronym defined in ``ITEM_ALIASES``.
 
         Returns:
             A filtered DataFrame with the index reset, containing only rows
-            that match any search term in either column.
+            that match any search term in the title.
         """
         base_query = item_name.lower()
         expanded = ITEM_ALIASES.get(base_query, [])
@@ -102,5 +100,5 @@ class ListingsQuery:
                 result |= lower.str.contains(term, na=False)
             return result
 
-        mask = _contains_any(df["title"]) | _contains_any(df["description"])
+        mask = _contains_any(df["title"])
         return df[mask].reset_index(drop=True)
