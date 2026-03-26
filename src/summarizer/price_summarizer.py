@@ -94,7 +94,9 @@ class PriceSummarizer:
             f" (date range: {date_range}):\n\n"
             f"{context}\n\n"
             f'For each listing that mentions "{item_name}", return:\n'
-            f"1. Item\n"
+            f"1. Item (use the full item name as it appears in the listing title,\n"
+            f'   e.g. if the title says "S> 17 BWG" and you searched "bwg",'
+            f' return "17 BWG")\n'
             f"2. Price (include S/B, C/O, and A/W if listed)\n"
             f"3. URL\n"
             f"4. Date of the listing\n\n"
