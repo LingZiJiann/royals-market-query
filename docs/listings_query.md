@@ -20,6 +20,27 @@ Settings are centralized in `config/config.py` at the project root.
 
 ---
 
+## Item Aliases
+
+Common item acronyms are defined in `config/item_aliases.py` as `ITEM_ALIASES: dict[str, list[str]]`. When `filter_by_item` receives a key from this dict, it searches for both the original input and all expansion terms.
+
+| Acronym | Searches for |
+|---------|-------------|
+| `st` | stonetooth |
+| `dsc` | dragon slash claw |
+| `kc` | king cent |
+| `dsb` | dragon shiner bow |
+| `rc` | red craven |
+| `dps` | dragon purple sleeve |
+| `bfc` | blackfist cape, black fist cape |
+| `vl` | von leon boots, von leon boot |
+| `bwg` | brown work gloves, brown work glove |
+| `fs` | facestomper, face stomper, facestompers, face stompers |
+
+Add new entries to `config/item_aliases.py` to extend coverage.
+
+---
+
 ## Dependencies
 
 | Package | Purpose |
@@ -27,6 +48,7 @@ Settings are centralized in `config/config.py` at the project root.
 | `pandas` | DataFrame handling and CSV I/O |
 | `pathlib` | Cache file path management |
 | `src.scraper.forum_scraping_multi_thread` | Underlying scraper (`ForumScrapper`) |
+| `config.item_aliases` | Acronym → item name mappings for search expansion |
 
 ---
 
@@ -76,7 +98,7 @@ Filters a listings DataFrame to rows that mention `item_name`.
 | `df` | `pd.DataFrame` | Full listings DataFrame from `load_or_scrape()` |
 | `item_name` | `str` | Item to search for (case-insensitive) |
 
-**Matching logic:** case-insensitive substring match against `title` **OR** `description`. For example, `"Stonetooth Sword"` matches any row where that string appears in either column.
+**Matching logic:** case-insensitive substring match against `title` **OR** `description`. If `item_name` is a key in `ITEM_ALIASES` (e.g. `"fs"`, `"bwg"`), the alias expansion terms are searched in addition to the original input. Full item name searches (e.g. `"facestomper"`) are unaffected.
 
 **Returns:** A filtered DataFrame (empty if no matches), with the index reset.
 
