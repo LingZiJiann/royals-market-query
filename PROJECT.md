@@ -15,13 +15,13 @@ The LLM answers based on actual current listings, not hallucinated prices.
 1. **Scrape** selling threads from the forum (titles, usernames, listing descriptions)
 2. **Filter** listings by keyword match on the item name
 3. **Prompt** a local Ollama model with the matching listings as context
-4. **Get** a grounded price answer
+4. **Get** a grounded price summary, rendered in the browser
 
 No embeddings, no vector database — just keyword search and a local LLM.
 
 ## Current State
 
-The scraper and query layer are fully functional:
+All three phases are complete and integrated:
 
 **Phase 1 — Scraper**
 - Scrapes paginated selling threads from `royals.ms/forum/forums/selling.17/`
@@ -32,9 +32,11 @@ The scraper and query layer are fully functional:
 **Phase 2 — Listings Query**
 - `ListingsQuery` class wraps the scraper with TTL-based CSV caching (default 30 min)
 - Case-insensitive keyword filtering on `title` column with acronym expansion (`config/item_aliases.py`)
-- Interactive REPL via `query.py` — scrapes once on startup, holds listings in memory across queries
 
-The Ollama price summary (Phase 3) is not yet built.
+**Phase 3 — Ollama Price Summary**
+- `PriceSummarizer` class sends filtered listings as context to a local Ollama LLM
+- Extracts S/B and A/W asking prices per listing; normalizes to millions
+- `query.py` integrates all three phases: scrapes once, queries in a loop, generates a price summary after each search, and opens it as a rendered HTML page in the browser
 
 ## Tech Stack
 
@@ -43,7 +45,8 @@ The Ollama price summary (Phase 3) is not yet built.
 | HTTP requests | `requests` |
 | HTML parsing | `beautifulsoup4` |
 | Data handling | `pandas` |
-| Local LLM | `ollama` (planned) |
+| Local LLM | `ollama` |
+| Markdown rendering | `markdown` |
 | Language | Python 3.10+ |
 
 ## Roadmap
@@ -56,14 +59,11 @@ Paginated, multithreaded scraper that collects marketplace listings into a DataF
 - Interactive REPL (`query.py`) — scrapes once, queries in a loop
 - Cache persists across REPL sessions; re-running within TTL skips the scrape
 
-### Phase 3 — Ollama Price Summary (Planned)
-- Take filtered listings from Phase 2 as input
-- Pass matching listings as context to a local Ollama LLM
-- Return a price summary answer
-
-## Open Decisions
-
-- **Ollama integration:** Which local model to use; how to structure the price-summary prompt
+### Phase 3 — Ollama Price Summary (Done)
+- `PriceSummarizer` takes filtered listings from Phase 2 as context
+- Sends them to a local Ollama LLM with a structured price-analysis system prompt
+- Extracts S/B (Starting Bid) and A/W (Auto Win) asking prices; normalizes all values to millions
+- `query.py` calls the summarizer after each search and opens the result as a rendered HTML page in the browser
 
 ## Usage
 
@@ -78,7 +78,7 @@ python scrape.py
 python query.py
 ```
 
-The REPL scrapes listings once on startup (or loads from cache), then lets you search by item name:
+The REPL scrapes listings once on startup (or loads from cache), then lets you search by item name. After printing matching listings, it generates a price summary via Ollama and opens it as a rendered HTML page in the browser:
 
 ```
 Item name (or "quit" to exit): Stonetooth Sword
@@ -91,6 +91,10 @@ Date:        2026-03-25
 Description: Selling stonetooth 118 atk, looking for 500m...
 URL:         https://royals.ms/forum/threads/...
 ──────────────────────────────────────────────────
+
+Generating price summary...
+Summarizer took 4.2s
+Summary opened in browser.
 ```
 
 ### Configuration
@@ -106,6 +110,8 @@ Edit `config/config.py` to change scraper behaviour:
 | `THREAD_FETCH_WORKERS` | `10` | Concurrent thread fetch threads |
 | `CACHE_FILE_PATH` | `cache/listings.csv` | Path where scraped listings are cached |
 | `CACHE_TTL_MINUTES` | `30` | Minutes before the cache is considered stale |
+| `OLLAMA_MODEL` | — | Ollama model name used for price summarization |
+| `OLLAMA_TIMEOUT` | — | Ollama request timeout in seconds |
 
 ## Project Structure
 
@@ -117,13 +123,16 @@ royals_market_query/
 ├── src/
 │   ├── scraper/
 │   │   └── forum_scraping_multi_thread.py  # ForumScrapper class
-│   └── query/
-│       └── listings_query.py               # ListingsQuery class
+│   ├── query/
+│   │   └── listings_query.py               # ListingsQuery class
+│   └── summarizer/
+│       └── price_summarizer.py             # PriceSummarizer class
 ├── cache/
 │   └── listings.csv       # Cached listings (auto-created)
 ├── docs/
 │   ├── forum_scraping_multi_thread.md      # Scraper API docs
-│   └── listings_query.md                   # Query layer API docs
+│   ├── listings_query.md                   # Query layer API docs
+│   └── price_summarizer.md                 # Summarizer API docs
 ├── scrape.py              # Scraper entry point
 ├── query.py               # Interactive REPL entry point
 └── pyproject.toml         # Dependencies
