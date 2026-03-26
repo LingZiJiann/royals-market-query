@@ -2,9 +2,12 @@ from config.config import (
     CACHE_FILE_PATH,
     CACHE_TTL_MINUTES,
     DEFAULT_MAX_PAGES,
+    OLLAMA_MODEL,
+    OLLAMA_TIMEOUT,
     SELLING_FORUM_URL,
 )
 from src.query.listings_query import ListingsQuery
+from src.summarizer.price_summarizer import PriceSummarizer
 
 DIVIDER = "─" * 50
 
@@ -26,6 +29,7 @@ def main() -> None:
         scraper_url=SELLING_FORUM_URL,
         max_pages=DEFAULT_MAX_PAGES,
     )
+    summarizer = PriceSummarizer(model=OLLAMA_MODEL, timeout=OLLAMA_TIMEOUT)
 
     listings = lq.load_or_scrape()
     print(f"Loaded {len(listings)} listings.\n")
@@ -50,6 +54,12 @@ def main() -> None:
         for _, row in results.iterrows():
             print_listing(row)
         print(DIVIDER + "\n")
+
+        print("Generating price summary...")
+        summary = summarizer.summarize(item_name, results)
+        print("\n--- Price Summary ---")
+        print(summary)
+        print()
 
 
 if __name__ == "__main__":
