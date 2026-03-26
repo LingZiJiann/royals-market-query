@@ -9,6 +9,7 @@ description = "AI query for the Royals MS forum marketplace"
 requires-python = ">=3.10"
 dependencies = [
     "beautifulsoup4>=4.12",
+    "ollama>=0.6",
     "pandas>=2.0",
     "requests>=2.31",
 ]
