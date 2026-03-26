@@ -11,7 +11,7 @@ THREAD_FETCH_WORKERS = 10
 
 # Cache settings
 CACHE_FILE_PATH = "cache/listings.csv"
-CACHE_TTL_MINUTES = 30
+CACHE_TTL_MINUTES = 240
 
 # Ollama LLM settings
 OLLAMA_MODEL = "deepseek-r1:14b"
