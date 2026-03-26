@@ -13,6 +13,7 @@ def print_listing(row) -> None:
     print(DIVIDER)
     print(f"Title:       {row['title']}")
     print(f"Seller:      {row['username']}")
+    print(f"Date:        {row['date']}")
     desc = str(row["description"])[:200]
     print(f"Description: {desc}")
     print(f"URL:         {row['preview_url']}")

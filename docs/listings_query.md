@@ -85,7 +85,7 @@ Returns a DataFrame of all marketplace listings. Checks the cache first:
 
 Prints a status line in both cases so the caller can see whether a scrape occurred.
 
-**Returns:** A DataFrame with columns `title`, `preview_url`, `username`, `description`.
+**Returns:** A DataFrame with columns `title`, `preview_url`, `username`, `date`, `description`.
 
 ---
 
@@ -149,6 +149,7 @@ Found 2 listing(s) for "Stonetooth Sword":
 ──────────────────────────────────────────────────
 Title:       [SELLING] Stonetooth Sword 118 atk
 Seller:      username123
+Date:        2026-03-25
 Description: Selling stonetooth 118 atk, looking for 500m...
 URL:         https://royals.ms/forum/threads/...
 ──────────────────────────────────────────────────

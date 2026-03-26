@@ -59,6 +59,7 @@ Scrapes thread listing metadata from a single forum page.
 | `title` | Thread title text |
 | `preview_url` | Full URL to the thread (with `/preview` suffix removed) |
 | `username` | Thread author's username |
+| `date` | Post date as a `datetime.date` object (parsed from `abbr.DateTime[data-time]`); `None` if not found |
 
 Threads are selected via CSS selector `li.discussionListItem`. Entries without a `.PreviewTooltip` link are skipped.
 
@@ -94,7 +95,7 @@ High-level entry point. Orchestrates the full scrape pipeline:
 2. `fetch_thread_description()` — fetch first-post text for each thread
 3. Convert to `pd.DataFrame` and return
 
-**Returns:** A DataFrame with columns `title`, `preview_url`, `username`, and `description`.
+**Returns:** A DataFrame with columns `title`, `preview_url`, `username`, `date`, and `description`.
 
 ---
 

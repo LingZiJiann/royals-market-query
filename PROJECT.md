@@ -26,7 +26,7 @@ The scraper and query layer are fully functional:
 **Phase 1 — Scraper**
 - Scrapes paginated selling threads from `royals.ms/forum/forums/selling.17/`
 - Multithreaded: 5 workers for pages, 10 workers for thread content
-- Returns a pandas DataFrame with columns: `title`, `username`, `preview_url`, `description`
+- Returns a pandas DataFrame with columns: `title`, `username`, `preview_url`, `date`, `description`
 - Configurable via `config/config.py`
 
 **Phase 2 — Listings Query**
@@ -87,6 +87,7 @@ Found 2 listing(s) for "Stonetooth Sword":
 ──────────────────────────────────────────────────
 Title:       [SELLING] Stonetooth Sword 118 atk
 Seller:      username123
+Date:        2026-03-25
 Description: Selling stonetooth 118 atk, looking for 500m...
 URL:         https://royals.ms/forum/threads/...
 ──────────────────────────────────────────────────

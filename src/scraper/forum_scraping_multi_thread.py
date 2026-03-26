@@ -1,4 +1,5 @@
 import concurrent.futures
+from datetime import datetime
 from typing import Dict, List
 
 import pandas as pd
@@ -63,6 +64,12 @@ class ForumScrapper:
             if not link:
                 continue
 
+            date_elem = li.select_one("abbr.DateTime")
+            if date_elem and date_elem.get("data-time"):
+                post_date = datetime.fromtimestamp(int(date_elem["data-time"])).date()
+            else:
+                post_date = None
+
             threads.append(
                 {
                     "title": link.get_text(strip=True),
@@ -71,6 +78,7 @@ class ForumScrapper:
                         f"{link.get('data-previewurl').removesuffix('/preview')}"
                     ),
                     "username": li.select_one("a.username").get_text(strip=True),
+                    "date": post_date,
                 }
             )
         return threads
