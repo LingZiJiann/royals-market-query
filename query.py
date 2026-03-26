@@ -1,3 +1,11 @@
+import pathlib
+import re
+import tempfile
+import time
+import webbrowser
+
+import markdown as md
+
 from config.config import (
     CACHE_FILE_PATH,
     CACHE_TTL_MINUTES,
@@ -12,6 +20,36 @@ from src.summarizer.price_summarizer import PriceSummarizer
 DIVIDER = "─" * 50
 
 
+def _open_summary_in_browser(item_name: str, summary: str) -> None:
+    linked = re.sub(r"(?<!\()(?<!\[)(https?://\S+)", r"[\1](\1)", summary)
+    body = md.markdown(linked, extensions=["tables"])
+    html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Price Summary: {item_name}</title>
+  <style>
+    body {{ font-family: sans-serif; max-width: 860px;
+            margin: 40px auto; padding: 0 20px; }}
+    h1 {{ font-size: 1.4rem; color: #333; }}
+    table {{ border-collapse: collapse; width: 100%; margin-top: 12px; }}
+    th, td {{ border: 1px solid #ddd; padding: 8px 12px; text-align: left; }}
+    th {{ background: #f0f0f0; font-weight: 600; }}
+    tr:nth-child(even) {{ background: #fafafa; }}
+    a {{ color: #1a73e8; }}
+  </style>
+</head>
+<body>
+  <h1>Price Summary: {item_name}</h1>
+  {body}
+</body>
+</html>"""
+    tmp = pathlib.Path(tempfile.mktemp(suffix=".html"))
+    tmp.write_text(html, encoding="utf-8")
+    webbrowser.open(tmp.as_uri())
+    print("Summary opened in browser.")
+
+
 def print_listing(row) -> None:
     print(DIVIDER)
     print(f"Title:       {row['title']}")
@@ -19,7 +57,8 @@ def print_listing(row) -> None:
     print(f"Date:        {row['date']}")
     desc = str(row["description"])[:200]
     print(f"Description: {desc}")
-    print(f"URL:         {row['preview_url']}")
+    url = row["preview_url"]
+    print(f"URL:         \033]8;;{url}\033\\{url}\033]8;;\033\\")
 
 
 def main() -> None:
@@ -56,10 +95,10 @@ def main() -> None:
         print(DIVIDER + "\n")
 
         print("Generating price summary...")
+        start = time.perf_counter()
         summary = summarizer.summarize(item_name, results)
-        print("\n--- Price Summary ---")
-        print(summary)
-        print()
+        print(f"Summarizer took {time.perf_counter() - start:.1f}s")
+        _open_summary_in_browser(item_name, summary)
 
 
 if __name__ == "__main__":
