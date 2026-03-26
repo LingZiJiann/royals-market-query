@@ -31,7 +31,7 @@ The scraper and query layer are fully functional:
 
 **Phase 2 — Listings Query**
 - `ListingsQuery` class wraps the scraper with TTL-based CSV caching (default 30 min)
-- Case-insensitive keyword filtering across `title` and `description` columns with acronym expansion (`config/item_aliases.py`)
+- Case-insensitive keyword filtering on `title` column with acronym expansion (`config/item_aliases.py`)
 - Interactive REPL via `query.py` — scrapes once on startup, holds listings in memory across queries
 
 The Ollama price summary (Phase 3) is not yet built.

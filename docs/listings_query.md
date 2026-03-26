@@ -98,7 +98,7 @@ Filters a listings DataFrame to rows that mention `item_name`.
 | `df` | `pd.DataFrame` | Full listings DataFrame from `load_or_scrape()` |
 | `item_name` | `str` | Item to search for (case-insensitive) |
 
-**Matching logic:** case-insensitive substring match against `title` **OR** `description`. If `item_name` is a key in `ITEM_ALIASES` (e.g. `"fs"`, `"bwg"`), the alias expansion terms are searched in addition to the original input. Full item name searches (e.g. `"facestomper"`) are unaffected.
+**Matching logic:** case-insensitive substring match against `title` only. If `item_name` is a key in `ITEM_ALIASES` (e.g. `"fs"`, `"bwg"`), the alias expansion terms are searched in addition to the original input. Full item name searches (e.g. `"facestomper"`) are unaffected.
 
 **Returns:** A filtered DataFrame (empty if no matches), with the index reset.
 
