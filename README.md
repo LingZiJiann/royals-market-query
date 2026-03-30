@@ -20,6 +20,21 @@ Maple Royals is a private MapleStory server where players buy and sell items in 
 
 ## Installation
 
+Using [uv](https://docs.astral.sh/uv/) (recommended):
+
+```bash
+uv sync
+```
+
+This creates a `.venv` and installs all dependencies. To run scripts within the environment:
+
+```bash
+uv run python query.py
+uv run python scrape.py
+```
+
+Alternatively, with pip:
+
 ```bash
 pip install -e .
 ```
